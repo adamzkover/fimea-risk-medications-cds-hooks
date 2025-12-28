@@ -2,6 +2,21 @@
 
 A [CDS Hooks](https://cds-hooks.hl7.org/) service that checks patient medications against the Finnish [National High-Risk Medicines Classification](https://fimea.fi/en/databases_and_registers/national-risk-medicines-classification) from Fimea.
 
+## Disclaimer
+
+**NOT FOR CLINICAL USE**
+
+This service is a demonstration project developed for the Nordic Health Data Hackathon in Helsinki, January 2026. It is intended solely to showcase the CDS Hooks standard and technical integration capabilities.
+
+**This software:**
+- Is NOT validated for clinical use
+- Is NOT approved or certified by any regulatory authority
+- Should NOT be used for any real healthcare decision-making
+- Should NOT be used in production clinical environments
+- Is provided "AS IS" without warranty of any kind
+
+Healthcare professionals must rely on their clinical judgment and validated, approved systems for patient care decisions. The developers assume no liability for any consequences resulting from the use or misuse of this software.
+
 ## Overview
 
 This service:

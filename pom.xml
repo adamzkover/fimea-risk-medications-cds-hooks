@@ -1,0 +1,184 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>hapi-fhir</artifactId>
+        <version>8.6.1</version>
+    </parent>
+
+    <groupId>no.ntnu.folk.adamzk</groupId>
+    <artifactId>fimea-risk-medications-cds-hooks</artifactId>
+    <version>1.0.0</version>
+
+    <name>Fimea Risk Medications CDS Hooks Service</name>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <hapi.fhir.version>8.6.1</hapi.fhir.version>
+        <spring_boot_version>3.4.11</spring_boot_version>
+    </properties>
+
+    <dependencies>
+        <!-- HAPI FHIR Models R5 -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r5</artifactId>
+            <version>${hapi.fhir.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- HAPI FHIR Client -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-client</artifactId>
+            <version>${hapi.fhir.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- HAPI FHIR CDS Hooks Components -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-server-cds-hooks</artifactId>
+            <version>${hapi.fhir.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Jakarta XML Binding API -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- JAXB Runtime Implementation -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Apache Commons CSV -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <configuration>
+                            <configLocation>checkstyle.xml</configLocation>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/hapi-extra-classes</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <excludeScope>provided</excludeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>clean-extra-classes</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${project.basedir}/hapi-extra-classes" />
+                                <mkdir dir="${project.basedir}/hapi-extra-classes" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy
+                                    file="${project.build.directory}/${project.build.finalName}.jar"
+                                    todir="${project.basedir}/hapi-extra-classes" />
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>getData</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Downloading data files..." />
+                                <mkdir dir="${project.basedir}/data" />
+                                <!-- Risk medicines classification XML -->
+                                <get
+                                    src="https://data.pilvi.fimea.fi/avoin-data/riskilaakeluokitus.xml"
+                                    dest="${project.basedir}/data/riskilaakeluokitus.xml"
+                                    usetimestamp="true" />
+                                <!-- Risk medicines classification XSD schema -->
+                                <get
+                                    src="https://fimea.fi/documents/147152901/159465728/Riskilaakeluokitus2024.xsd"
+                                    dest="${project.basedir}/data/Riskilaakeluokitus2024.xsd"
+                                    usetimestamp="true" />
+                                <!-- Medicine package data -->
+                                <get
+                                    src="https://fimea.fi/documents/147152901/159465988/pakkaus_nolla.txt"
+                                    dest="${project.basedir}/data/pakkaus_nolla.txt"
+                                    usetimestamp="true" />
+                                <!-- Medicine substance data -->
+                                <get
+                                    src="https://fimea.fi/documents/147152901/159465988/laakeaine.txt"
+                                    dest="${project.basedir}/data/laakeaine.txt"
+                                    usetimestamp="true" />
+                                <echo message="Data files downloaded to ${project.basedir}/data" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

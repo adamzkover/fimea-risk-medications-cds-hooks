@@ -1,0 +1,22 @@
+services:
+  fhir:
+    container_name: fhir-cds-hooks
+    image: "hapiproject/hapi:v8.6.0-1"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      - NO_NTNU_FOLK_ADAMZK_RISK_MEDICATIONS=/data/riskilaakeluokitus.xml
+      - NO_NTNU_FOLK_ADAMZK_MEDICINE_PACKAGES=/data/pakkaus_nolla.txt
+    configs:
+      - source: hapi
+        target: /app/config/application.yaml
+      - source: hapi-extra-classes
+        target: /app/extra-classes
+
+configs:
+  hapi:
+     file: ./hapi.application.yaml
+  hapi-extra-classes:
+     file: ./hapi-extra-classes

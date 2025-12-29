@@ -15,6 +15,16 @@ services:
       - source: hapi-extra-classes
         target: /app/extra-classes
 
+  nginx:
+    container_name: nginx-proxy
+    build:
+      context: ./nginx-proxy
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - fhir
+
 configs:
   hapi:
      file: ./hapi.application.yaml

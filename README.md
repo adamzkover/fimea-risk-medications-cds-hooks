@@ -21,7 +21,9 @@ Healthcare professionals must rely on their clinical judgment and validated, app
 
 This service:
 - Integrates with HAPI FHIR Server (v8.6.1) as a CDS Hooks provider
-- Monitors patient medication lists via the `patient-view` hook
+- Provides two CDS Hooks:
+  - `patient-view` - Checks patient's existing medications when viewing patient record
+  - `order-select` - Checks medications being prescribed when creating orders
 - Matches medications by VNR (Finnish package code) and ATC codes
 - Returns warnings for medications classified as high-risk
 - Filters results by route of administration when applicable
@@ -116,29 +118,46 @@ Expected response:
 {
   "services": [
     {
-      "id": "risk-medicines",
+      "id": "risk-medicines-pv",
       "hook": "patient-view",
-      "title": "",
+      "title": "High-Risk Medicines Check Patient View",
       "description": "A service that checks the patient's medications against the risk medicines list",
       "prefetch": {
         "medications": "MedicationStatement?patient={{context.patientId}}"
       }
+    },
+    {
+      "id": "risk-medicines-os",
+      "hook": "order-select",
+      "title": "High-Risk Medicines Check Prescription",
+      "description": "A service that checks the medications being prescribed against the risk medicines list",
+      "prefetch": {}
     }
   ]
 }
 ```
 
-### 2. Service Endpoint
+### 2. Patient View Hook
 
-Test the service with a sample request:
+Test the patient-view hook with a sample request:
 
 ```bash
-curl -X POST http://localhost:8080/cds-services/risk-medicines \
+curl -X POST http://localhost:8080/cds-services/risk-medicines-pv \
   -H "Content-Type: application/json" \
-  -d @src/test/resources/request.json
+  -d @src/test/resources/request-patient-view.json
 ```
 
-Expected response format:
+### 3. Order Select Hook
+
+Test the order-select hook with a sample request:
+
+```bash
+curl -X POST http://localhost:8080/cds-services/risk-medicines-os \
+  -H "Content-Type: application/json" \
+  -d @src/test/resources/request-order-select.json
+```
+
+Expected response format (for both hooks):
 ```json
 {
   "cards": [
@@ -173,7 +192,8 @@ Expected response format:
 │   │       └── META-INF/spring/    # Spring Boot autoconfiguration
 │   └── test/
 │       └── resources/
-│           └── request.json        # Sample CDS Hooks request
+│           ├── request-patient-view.json   # Sample patient-view hook request
+│           └── request-order-select.json   # Sample order-select hook request
 ├── docker-compose.yml
 ├── hapi.application.yaml           # HAPI FHIR configuration
 └── pom.xml

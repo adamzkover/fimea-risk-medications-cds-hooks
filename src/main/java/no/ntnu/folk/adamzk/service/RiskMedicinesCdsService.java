@@ -7,9 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Bundle;
 import org.hl7.fhir.r5.model.Coding;
+import org.hl7.fhir.r5.model.MedicationRequest;
 import org.hl7.fhir.r5.model.MedicationStatement;
 import org.springframework.stereotype.Component;
 
+import ca.uhn.fhir.rest.api.server.cdshooks.CdsServiceRequestContextJson;
 import ca.uhn.fhir.rest.api.server.cdshooks.CdsServiceRequestJson;
 import ca.uhn.hapi.fhir.cdshooks.api.CdsService;
 import ca.uhn.hapi.fhir.cdshooks.api.CdsServicePrefetch;
@@ -40,13 +42,14 @@ public class RiskMedicinesCdsService {
         this.riskMedicinesRepository = riskMedicinesRepository;
     }
 
-    @CdsService(value = "risk-medicines", hook = "patient-view",
+    @CdsService(value = "risk-medicines-pv", hook = "patient-view",
+            title = "High-Risk Medicines Check Patient View",
             description = "A service that checks the patient's medications against the risk medicines list",
             prefetch = {
                     @CdsServicePrefetch(value = "medications",
                             query = "MedicationStatement?patient={{context.patientId}}")
     })
-    public CdsServiceResponseJson riskMedicinesService(CdsServiceRequestJson request) {
+    public CdsServiceResponseJson riskMedicinesPatientView(CdsServiceRequestJson request) {
         CdsServiceResponseJson response = new CdsServiceResponseJson();
         List<MedicationStatement> medicationStatements = extractMedicationStatements(request);
         for (MedicationStatement medicationStatement : medicationStatements) {
@@ -59,8 +62,33 @@ public class RiskMedicinesCdsService {
                     List<RiskMedicineClassification> riskMedicines = riskMedicinesRepository
                             .findByAtcCodeAndRoute(atcCode, routeOfAdministration);
                     for (RiskMedicineClassification riskMedicine : riskMedicines) {
-                        CdsServiceResponseCardJson card = createRiskMedicineCard(
-                                medicationStatement, medicinePackage, riskMedicine);
+                        CdsServiceResponseCardJson card = createRiskMedicineCard(medicinePackage, riskMedicine);
+                        response.addCard(card);
+                    }
+                }
+            }
+        }
+        return response;
+    }
+
+    @CdsService(value = "risk-medicines-os", hook = "order-select",
+            title = "High-Risk Medicines Check Prescription",
+            description = "A service that checks the medications being prescribed against the risk medicines list",
+            prefetch = {})
+    public CdsServiceResponseJson riskMedicinesOrderSelect(CdsServiceRequestJson request) {
+        CdsServiceResponseJson response = new CdsServiceResponseJson();
+        List<MedicationRequest> medicationRequests = extractMedicationRequests(request);
+        for (MedicationRequest medicationRequest : medicationRequests) {
+            String vnr = extractVnr(medicationRequest);
+            String routeOfAdministration = extractRoute(medicationRequest);
+            List<MedicinePackage> packages = medicinePackageRepository.findByVnr(vnr);
+            for (MedicinePackage medicinePackage : packages) {
+                String atcCode = medicinePackage.getAtcCode();
+                if (StringUtils.isNotEmpty(atcCode)) {
+                    List<RiskMedicineClassification> riskMedicines = riskMedicinesRepository
+                            .findByAtcCodeAndRoute(atcCode, routeOfAdministration);
+                    for (RiskMedicineClassification riskMedicine : riskMedicines) {
+                        CdsServiceResponseCardJson card = createRiskMedicineCard(medicinePackage, riskMedicine);
                         response.addCard(card);
                     }
                 }
@@ -86,8 +114,34 @@ public class RiskMedicinesCdsService {
         return medicationStatements;
     }
 
+    private List<MedicationRequest> extractMedicationRequests(CdsServiceRequestJson request) {
+        List<MedicationRequest> medicationRequests = new ArrayList<>();
+        CdsServiceRequestContextJson context = request.getContext();
+        if (context != null && context.containsKey("draftOrders")) {
+            Object medicationsResource = context.get("draftOrders");
+            if (medicationsResource instanceof Bundle) {
+                Bundle medicationsBundle = (Bundle) medicationsResource;
+                medicationsBundle.getEntry().forEach(entry -> {
+                    if (entry.getResource() instanceof MedicationRequest) {
+                        MedicationRequest medicationRequest = (MedicationRequest) entry.getResource();
+                        medicationRequests.add(medicationRequest);
+                    }
+                });
+            }
+        }
+        return medicationRequests;
+    }
+
     private String extractVnr(MedicationStatement medicationStatement) {
         return medicationStatement.getMedication().getConcept().getCoding().stream()
+                .filter(coding -> VNR_SYSTEM.equals(coding.getSystem()))
+                .map(Coding::getCode)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String extractVnr(MedicationRequest medicationRequest) {
+        return medicationRequest.getMedication().getConcept().getCoding().stream()
                 .filter(coding -> VNR_SYSTEM.equals(coding.getSystem()))
                 .map(Coding::getCode)
                 .findFirst()
@@ -106,8 +160,19 @@ public class RiskMedicinesCdsService {
                 .orElse(null);
     }
 
-    private CdsServiceResponseCardJson createRiskMedicineCard(
-            MedicationStatement medicationStatement, MedicinePackage medicinePackage,
+    private String extractRoute(MedicationRequest medicationRequest) {
+        return medicationRequest.getDosageInstruction().stream()
+                .filter(dosage -> dosage.hasRoute())
+                .map(dosage -> dosage.getRoute().getCoding().stream()
+                        .filter(coding -> ROUTE_SYSTEM.equals(coding.getSystem()))
+                        .map(Coding::getCode)
+                        .findFirst()
+                        .orElse(null))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private CdsServiceResponseCardJson createRiskMedicineCard(MedicinePackage medicinePackage,
             RiskMedicineClassification riskMedication) {
         CdsServiceResponseCardJson card = new CdsServiceResponseCardJson();
 

@@ -1,0 +1,66 @@
+{
+    "hook": "order-select",
+    "hookInstance": "45c68eae-2d24-4053-bdbf-ffeb6ff9b453",
+    "context": {
+        "userId": "Practitioner/123",
+        "patientId": "123",
+        "encounterId": "456",
+        "selections": ["MedicationRequest/medreq1", "MedicationRequest/medreq2"],
+        "draftOrders": {
+            "resourceType": "Bundle",
+            "type": "searchset",
+            "total": 2,
+            "entry": [
+                {
+                    "resource": {
+                        "resourceType": "MedicationRequest",
+                        "id": "medreq1",
+                        "status": "draft",
+                        "medication": {
+                            "concept": {
+                                "coding": [
+                                    {
+                                        "system": "https://pharmaca.fi/vnr",
+                                        "code": "486571",
+                                        "display": "MAREVAN 3 mg tabletti Orion Corporation"
+                                    }
+                                ]
+                            }
+                        },
+                        "dosageInstruction": [
+                            {
+                                "route": {
+                                    "coding": [
+                                        {
+                                            "system": "https://fimea.fi/risk-medicines/route-of-administration",
+                                            "code": "1055",
+                                            "display": "Suun kautta"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "resource": {
+                        "resourceType": "MedicationRequest",
+                        "id": "medreq2",
+                        "status": "draft",
+                        "medication": {
+                            "concept": {
+                                "coding": [
+                                    {
+                                        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                                        "code": "654321",
+                                        "display": "Warfarin 5mg"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

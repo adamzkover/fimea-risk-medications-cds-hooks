@@ -6,7 +6,7 @@ A [CDS Hooks](https://cds-hooks.hl7.org/) service that checks patient medication
 
 **NOT FOR CLINICAL USE**
 
-This service is a demonstration project developed for the Nordic Health Data Hackathon in Helsinki, January 2026. It is intended solely to showcase the CDS Hooks standard and technical integration capabilities.
+This service is a demonstration project developed for [the Nordic Health Data Hackathon in Helsinki, January 2026](https://fhir.fi/hackathon/2026/finland/care-plans). It is intended solely to showcase the CDS Hooks standard and technical integration capabilities.
 
 **This software:**
 - Is NOT validated for clinical use

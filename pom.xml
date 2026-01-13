@@ -154,24 +154,20 @@
                                 <!-- Risk medicines classification XML -->
                                 <get
                                     src="https://data.pilvi.fimea.fi/avoin-data/riskilaakeluokitus.xml"
-                                    dest="${project.basedir}/data/riskilaakeluokitus.xml"
-                                    usetimestamp="true" />
+                                    dest="${project.basedir}/data/riskilaakeluokitus.xml" />
                                 <!-- Risk medicines classification XSD schema -->
                                 <get
                                     src="https://fimea.fi/documents/147152901/159465728/Riskilaakeluokitus2024.xsd"
-                                    dest="${project.basedir}/data/Riskilaakeluokitus2024.xsd"
-                                    usetimestamp="true" />
+                                    dest="${project.basedir}/data/Riskilaakeluokitus2024.xsd" />
                                 <!-- Medicine package data -->
                                 <get
                                     src="https://fimea.fi/documents/147152901/159465988/pakkaus_nolla.txt"
-                                    dest="${project.basedir}/data/pakkaus_nolla.txt"
-                                    usetimestamp="true" />
+                                    dest="${project.basedir}/data/pakkaus_nolla.txt" />
                                 <!-- Medicine substance data -->
                                 <!--
                                 <get
                                     src="https://fimea.fi/documents/147152901/159465988/laakeaine.txt"
-                                    dest="${project.basedir}/data/laakeaine.txt"
-                                    usetimestamp="true" />
+                                    dest="${project.basedir}/data/laakeaine.txt" />
                                 -->
                                 <echo message="Data files downloaded to ${project.basedir}/data" />
                             </target>

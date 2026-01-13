@@ -20,6 +20,7 @@ import ca.uhn.hapi.fhir.cdshooks.api.json.CdsServiceResponseCardJson;
 import ca.uhn.hapi.fhir.cdshooks.api.json.CdsServiceResponseCardSourceJson;
 import ca.uhn.hapi.fhir.cdshooks.api.json.CdsServiceResponseJson;
 import no.ntnu.folk.adamzk.model.MedicinePackage;
+import no.ntnu.folk.adamzk.model.RiskMedicineCdsHooksExtension;
 import no.ntnu.folk.adamzk.model.RiskMedicineClassification;
 import no.ntnu.folk.adamzk.repository.MedicinePackageRepository;
 import no.ntnu.folk.adamzk.repository.RiskMedicinesRepository;
@@ -48,7 +49,10 @@ public class RiskMedicinesCdsService {
             prefetch = {
                     @CdsServicePrefetch(value = "medications",
                             query = "MedicationStatement?patient={{context.patientId}}")
-    })
+            },
+            extension = "{\"usageRequirements\": \"NOT FOR CLINICAL USE\"}",
+            extensionClass = RiskMedicineCdsHooksExtension.class
+    )
     public CdsServiceResponseJson riskMedicinesPatientView(CdsServiceRequestJson request) {
         CdsServiceResponseJson response = new CdsServiceResponseJson();
         List<MedicationStatement> medicationStatements = extractMedicationStatements(request);
@@ -63,6 +67,9 @@ public class RiskMedicinesCdsService {
                             .findByAtcCodeAndRoute(atcCode, routeOfAdministration);
                     for (RiskMedicineClassification riskMedicine : riskMedicines) {
                         CdsServiceResponseCardJson card = createRiskMedicineCard(medicinePackage, riskMedicine);
+                        RiskMedicineCdsHooksExtension extension = new RiskMedicineCdsHooksExtension();
+                        extension.setUsageRequirements("NOT FOR CLINICAL USE");
+                        card.setExtension(extension);
                         response.addCard(card);
                     }
                 }
@@ -74,7 +81,10 @@ public class RiskMedicinesCdsService {
     @CdsService(value = "risk-medicines-os", hook = "order-select",
             title = "High-Risk Medicines Check Prescription",
             description = "A service that checks the medications being prescribed against the risk medicines list",
-            prefetch = {})
+            prefetch = {},
+            extension = "{\"usageRequirements\": \"NOT FOR CLINICAL USE\"}",
+            extensionClass = RiskMedicineCdsHooksExtension.class
+        )
     public CdsServiceResponseJson riskMedicinesOrderSelect(CdsServiceRequestJson request) {
         CdsServiceResponseJson response = new CdsServiceResponseJson();
         List<MedicationRequest> medicationRequests = extractMedicationRequests(request);
@@ -89,6 +99,9 @@ public class RiskMedicinesCdsService {
                             .findByAtcCodeAndRoute(atcCode, routeOfAdministration);
                     for (RiskMedicineClassification riskMedicine : riskMedicines) {
                         CdsServiceResponseCardJson card = createRiskMedicineCard(medicinePackage, riskMedicine);
+                        RiskMedicineCdsHooksExtension extension = new RiskMedicineCdsHooksExtension();
+                        extension.setUsageRequirements("NOT FOR CLINICAL USE");
+                        card.setExtension(extension);
                         response.addCard(card);
                     }
                 }
@@ -177,11 +190,12 @@ public class RiskMedicinesCdsService {
         CdsServiceResponseCardJson card = new CdsServiceResponseCardJson();
 
         // Summary
-        card.setSummary("High-Risk Medicine: " + medicinePackage.getMedicineName()
+        card.setSummary("NOT FOR CLINICAL USE - High-Risk Medicine: " + medicinePackage.getMedicineName()
                 + " (Vnr: " + medicinePackage.getVnr() + ")");
 
         // Detail
         StringBuilder detail = new StringBuilder();
+        detail.append("# NOT FOR CLINICAL USE").append("\n\n");
         detail.append("**Medication:** ").append(medicinePackage.getMedicineName()).append("\n");
         detail.append("**Strength:** ").append(medicinePackage.getStrength()).append("\n");
         detail.append("**Dose Form:** ").append(medicinePackage.getDoseForm()).append("\n");

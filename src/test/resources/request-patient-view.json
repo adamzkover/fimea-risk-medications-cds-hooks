@@ -22,8 +22,8 @@
                                 "coding": [
                                     {
                                         "system": "https://pharmaca.fi/vnr",
-                                        "code": "486571",
-                                        "display": "MAREVAN 3 mg tabletti Orion Corporation"
+                                        "code": "123456",
+                                        "display": "PIXIE DUST 50 mg tabletti ACME Corp."
                                     }
                                 ]
                             }
@@ -52,9 +52,9 @@
                             "concept": {
                                 "coding": [
                                     {
-                                        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-                                        "code": "654321",
-                                        "display": "Warfarin 5mg"
+                                        "system": "https://pharmaca.fi/vnr",
+                                        "code": "234567",
+                                        "display": "HEARTHLIGHT DROPS 10 ml pullo ACME Corp."
                                     }
                                 ]
                             }

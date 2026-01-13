@@ -38,18 +38,19 @@ This service:
 
 The project requires data files from Fimea's databases. These files are licensed and cannot be included in the repository.
 
+**For testing and demonstration purposes**, placeholder data files are included in the `data/` directory. However, **production data can be downloaded** using the Maven command described below.
+
 ### Required Files
 
 The following files must be placed in the `data/` directory:
 
-1. `riskilaakeluokitus.xml` - Risk medicines classification
-2. `Riskilaakeluokitus2024.xsd` - XML schema of the risk medicines classification
-3. `pakkaus_nolla.txt` - Medicine package data (from Basic Register)
-4. `laakeaine.txt` - Medicine substance data (from Basic Register) - *downloaded but not currently used*
+1. `riskilaakeluokitus.xml` - Risk medicines classification data
+1. `Riskilaakeluokitus2024.xsd` - XML schema of the risk medicines classification
+1. `pakkaus_nolla.txt` - Medicine package data (from Basic Register)
 
-### Obtaining Data Files
+### Obtaining Production Data Files
 
-The download URLs are already configured in `pom.xml`. Simply run:
+The download URLs are already configured in `pom.xml`. To download production data from Fimea's databases, run:
 
 ```bash
 mvn antrun:run@getData

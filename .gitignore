@@ -19,5 +19,3 @@ buildNumber.properties
 # Project-specific files
 hapi-extra-classes/*.jar
 data/*.xsd
-data/*.xml
-data/*.txt

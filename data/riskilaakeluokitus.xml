@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Riskilaakeluokitus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="Riskilaakeluokitus2024.xsd">
+    <Versiotiedot>
+        <Ajopvm>2026-01-01</Ajopvm>
+    </Versiotiedot>
+    <Riskilaakeluokitusrivi id="999" title="Testi sydänlääke" titlesv="Test hjärtläkemedel"
+        titleen="Test cardiac medication">
+        <ATC-koodi listname="ATC Code" id="C09AC99" value="testimedisiini" valuesv="testmedicin"
+            valueen="test medicine" />
+        <Antoreitti listname="Route of Administration" id="1055" value="Suun kautta"
+            valuesv="Oral användning" valueen="Oral use" />
+        <VakavaSeuraus id="1" description="Liian suuri annos voi johtaa sydämen rytmihäiriöihin"
+            descriptionsv="För stor dos kan leda till hjärtrytmrubbningar"
+            descriptionen="Excessive dose may lead to cardiac arrhythmias">
+            <Seuraus listname="Risk Medicines Consequence" id="45" value="Sydämen rytmihäiriöt"
+                valuesv="Hjärtrytmrubbningar" valueen="Cardiac arrhythmias" />
+        </VakavaSeuraus>
+        <VakavaSeuraus id="2" description="Liian pieni annos ei tehoa riittävästi"
+            descriptionsv="För liten dos är inte tillräckligt effektiv"
+            descriptionen="Insufficient dose is not adequately effective">
+            <Seuraus listname="Risk Medicines Consequence" id="46" value="Tehottomuus"
+                valuesv="Ineffektivitet" valueen="Ineffectiveness" />
+        </VakavaSeuraus>
+        <LaakkeeseenLiittyvaRiski id="1">
+            <Riski listname="Risk Medicines Medicine Risk" id="11"
+                value="Kapea terapeuttinen leveys" valuesv="Smal terapeutisk bredd"
+                valueen="Narrow therapeutic index" />
+        </LaakkeeseenLiittyvaRiski>
+        <LaakkeeseenLiittyvaRiski id="2">
+            <Riski listname="Risk Medicines Medicine Risk" id="28" value="Yhteisvaikutukset"
+                valuesv="Interaktioner" valueen="Interactions" />
+        </LaakkeeseenLiittyvaRiski>
+        <LaakehoidonToteutukseenLiittyvaRiskikohta id="1"
+            description="Annosteluvirheet ovat yleisiä vähäisen koulutuksen vuoksi"
+            descriptionsv="Doseringsfel är vanliga på grund av otillräcklig utbildning"
+            descriptionen="Dosing errors are common due to insufficient training">
+            <LaakehoidonVaihe listname="Risk Medicines Process Risk" id="3" value="Annostelu"
+                valuesv="Dosering" valueen="Dosage" />
+        </LaakehoidonToteutukseenLiittyvaRiskikohta>
+        <LaakehoidonToteutukseenLiittyvaRiskikohta id="2"
+            description="Säännöllinen seuranta on tarpeen tehon varmistamiseksi"
+            descriptionsv="Regelbunden uppföljning är nödvändig för att säkerställa effektiviteten"
+            descriptionen="Regular monitoring is necessary to ensure effectiveness">
+            <LaakehoidonVaihe listname="Risk Medicines Process Risk" id="4"
+                value="Lääkehoidon seuranta" valuesv="Uppföljning av läkemedelsbehandling"
+                valueen="Monitoring of pharmacotherapy" />
+        </LaakehoidonToteutukseenLiittyvaRiskikohta>
+        <LaakehoidonToteutukseenLiittyvaRiskikohta id="3"
+            description="Potilaalle on annettava selvät ohjeet lääkkeen käytöstä"
+            descriptionsv="Patienten måste ges tydliga anvisningar om användningen av läkemedlet"
+            descriptionen="The patient must be given clear instructions on the use of the medicine">
+            <LaakehoidonVaihe listname="Risk Medicines Process Risk" id="5"
+                value="Huomioi potilasohjauksessa ja lääkeneuvonnassa"
+                valuesv="Observera i patienthandledningen och medicinrådgivning"
+                valueen="Take into account in patient education and medication counselling" />
+        </LaakehoidonToteutukseenLiittyvaRiskikohta>
+    </Riskilaakeluokitusrivi>
+</Riskilaakeluokitus>

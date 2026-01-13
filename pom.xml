@@ -167,10 +167,12 @@
                                     dest="${project.basedir}/data/pakkaus_nolla.txt"
                                     usetimestamp="true" />
                                 <!-- Medicine substance data -->
+                                <!--
                                 <get
                                     src="https://fimea.fi/documents/147152901/159465988/laakeaine.txt"
                                     dest="${project.basedir}/data/laakeaine.txt"
                                     usetimestamp="true" />
+                                -->
                                 <echo message="Data files downloaded to ${project.basedir}/data" />
                             </target>
                         </configuration>

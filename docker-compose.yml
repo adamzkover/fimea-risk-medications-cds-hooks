@@ -22,6 +22,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    environment:
+      - AUTH_ENABLED=${AUTH_ENABLED:-false}
+      - AUTH_TOKEN=${AUTH_TOKEN:-}
+      - NGINX_ENVSUBST_FILTER_DEFINED=true
     depends_on:
       - fhir
 

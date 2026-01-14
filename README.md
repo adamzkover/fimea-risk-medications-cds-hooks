@@ -31,7 +31,7 @@ This service:
 ## Requirements
 
 - **Java 17** or higher
-- **Maven 3.6+**
+- **Maven 3.9** or higher
 - **Docker** and **Docker Compose**
 
 ## Data Files
@@ -61,6 +61,19 @@ This will download all required files from Fimea's databases to the `data/` dire
 **Note:** The files are available from:
 - [Fimea Risk Medicines Classification](https://fimea.fi/en/databases_and_registers/national-risk-medicines-classification)
 - [Fimea Basic Register](https://fimea.fi/en/databases_and_registers/basic-register)
+
+### Matching Request and Service Data
+
+For the service to return a card, the medication code and route of administration in the request has to match a warning in the data of the service. In the sample data that is part of the repository, there is a match for medication code 123456 and route of administration.
+
+If production data is downloaded, the request must be changed to have a medication code and route of administration code that matches a warning in the production data.
+
+1. Check `riskilaakeluokitus.xml` and find a warning (`<Riskilaakeluokitusrivi>`) for testing.
+1. Get an **ATC code** form an `<ATC-koodi>` element's `id` attribute.
+1. Get a **route of administration code** from an `<Antoreitti>` element's `id` attribute.
+1. Check `pakkaus_nolla.txt` and search for the ATC code.
+1. Get the **medication code** from the 2. column of a matching line.
+1. Add a resource (MedicationStatement or MedicationRequest) with the medication code and the route of administration code to the request.
 
 ## Building the Project
 

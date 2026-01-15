@@ -30,9 +30,17 @@ This service:
 
 ## Requirements
 
-- **Java 17** or higher
-- **Maven 3.9** or higher
-- **Docker** and **Docker Compose**
+### Java JDK 17+
+
+Install a Java JDK, version 17 or higher. Java is available from many vendors. See an overview with download links on [jdkcomparison.com](https://jdkcomparison.com/?versions=17)
+
+### Maven 3.9+
+
+See the [Installation Guide](https://maven.apache.org/install.html) for Apache Maven.
+
+### Docker and Docker Compose
+
+Install [Docker Engine](https://docs.docker.com/engine/install/) (server) or [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/).
 
 ## Data Files
 
@@ -64,7 +72,7 @@ This will download all required files from Fimea's databases to the `data/` dire
 
 ### Matching Request and Service Data
 
-For the service to return a card, the medication code and route of administration in the request has to match a warning in the data of the service. In the sample data that is part of the repository, there is a match for medication code 123456 and route of administration.
+For the service to return a card, the medication code and route of administration in the request has to match a warning in the data of the service. In the sample data that is part of the repository, there is a match for medication code `123456` and route of administration `1055`.
 
 If production data is downloaded, the request must be changed to have a medication code and route of administration code that matches a warning in the production data.
 
